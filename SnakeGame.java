@@ -32,7 +32,8 @@ public class SnakeGame extends JPanel implements ActionListener, KeyListener {
     int velocityY;
     Timer gameLoop;
 
-    boolean gameOver = false;
+    private JButton retryButton;
+    private boolean gameOver = false;
 
     SnakeGame(int boardWidth, int boardHeight) {
         this.boardWidth = boardWidth;
@@ -55,6 +56,13 @@ public class SnakeGame extends JPanel implements ActionListener, KeyListener {
 		//game timer
 		gameLoop = new Timer(100, this); //how long it takes to start timer, milliseconds gone between frames 
         gameLoop.start();
+
+        // Initialize retry button
+        retryButton = new JButton("Retry");
+        retryButton.setBounds(boardWidth/2 - 50, boardHeight/2 + 20, 100, 30);
+        retryButton.setVisible(false);
+        retryButton.addActionListener(e -> resetGame());
+        add(retryButton);
 	}	
     
     public void paintComponent(Graphics g) {
@@ -93,9 +101,11 @@ public class SnakeGame extends JPanel implements ActionListener, KeyListener {
         if (gameOver) {
             g.setColor(Color.red);
             g.drawString("Game Over: " + String.valueOf(snakeBody.size()), tileSize - 16, tileSize);
+            retryButton.setVisible(true);
         }
         else {
             g.drawString("Score: " + String.valueOf(snakeBody.size()), tileSize - 16, tileSize);
+            retryButton.setVisible(false);
         }
 	}
 
@@ -184,4 +194,16 @@ public class SnakeGame extends JPanel implements ActionListener, KeyListener {
 
     @Override
     public void keyReleased(KeyEvent e) {}
+
+    private void resetGame() {
+        snakeHead = new Tile(5, 5);
+        snakeBody = new ArrayList<Tile>();
+        food = new Tile(10, 10);
+        placeFood();
+        velocityX = 1;
+        velocityY = 0;
+        gameOver = false;
+        retryButton.setVisible(false);
+        gameLoop.start();
+    }
 }
